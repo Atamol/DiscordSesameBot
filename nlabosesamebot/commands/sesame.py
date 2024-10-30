@@ -19,7 +19,7 @@ debug_mode: bool = True
 async def on_sesame_statechanged(device):
     device_status = device.getDeviceStatus()
     doorlock_status["is_locked"] = (device_status == "CHSesame2Status.Locked")
-    
+
     status_text = f"Device status: {device_status}\n"
     if debug_mode:
         mech_status = device.getMechStatus()
@@ -37,9 +37,8 @@ async def on_sesame_statechanged(device):
             description=status_text,
             color=discord.Color.blue()
         )
-        await channel.send(embed=embed)
-
-    await update_lock_status_message()
+        client.loop.create_task(channel.send(embed=embed))
+    client.loop.create_task(update_lock_status_message())
 
 async def send_embed_notification(interaction: Interaction, action: str, color: discord.Color):
     notification_channel_id = int(os.getenv('DISCORD_CHANNEL'))
