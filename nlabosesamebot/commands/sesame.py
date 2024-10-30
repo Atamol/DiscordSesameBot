@@ -90,9 +90,11 @@ async def update_lock_status_message():
     global info_message
     button_channel_id = int(os.getenv('DISCORD_BUTTON_CHANNEL'))
     button_channel = client.get_channel(button_channel_id)
+
     if button_channel:
-        status = "🔒 **Locked**" if doorlock_status["is_locked"] else "🔓 **Unlocked**"
-        content = f"**Doorlock status:** {status}"
+        lock_status = "🔒 **Locked**" if doorlock_status["is_locked"] else "🔓 **Unlocked**"
+        debug_status = "ON" if debug_mode else "OFF"
+        content = f"**Doorlock status:** {lock_status}\n**Debug mode:** {debug_status}"
 
         if info_message:
             try:
