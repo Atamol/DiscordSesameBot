@@ -16,6 +16,28 @@ doorlock_status = {"is_locked": True}
 latest_interaction: Interaction = None
 debug_mode: bool = True
 
+async def on_sesame_statechanged(device):
+    device_status = device.getDeviceStatus()
+    mech_status = device.getMechStatus()
+    status_text = f"Device status: {device_status}\n"
+
+    if mech_status is not None:
+        status_text += f"Battery: {mech_status.getBatteryPercentage()}%\n"
+        status_text += f"Battery Voltage: {mech_status.getBatteryVoltage():.2f}V\n"
+        status_text += f"isInLockRange: {mech_status.isInLockRange()}\n"
+        status_text += f"isInUnlockRange: {mech_status.isInUnlockRange()}\n"
+
+    notification_channel_id = int(os.getenv('DISCORD_CHANNEL'))
+    channel = client.get_channel(notification_channel_id)
+
+    if channel:
+        embed = discord.Embed(
+            title="Device Status Update",
+            description=status_text,
+            color=discord.Color.blue()
+        )
+        await channel.send(embed=embed)
+
 async def send_embed_notification(interaction: Interaction, action: str, color: discord.Color):
     notification_channel_id = int(os.getenv('DISCORD_CHANNEL'))
     channel = client.get_channel(notification_channel_id)
