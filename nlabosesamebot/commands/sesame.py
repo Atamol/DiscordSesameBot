@@ -50,7 +50,7 @@ async def send_embed_notification(interaction: Interaction, action: str, color: 
             description=f"{emoji} **{interaction.user.display_name} has {action_text} the door**",
             color=color
         )
-        embed.set_author(name=f"{interaction.user.display_name} used {action_text.capitalize()}", icon_url=interaction.user.avatar.url)
+        embed.set_author(name=f"{interaction.user.display_name} used {action_text.capitalize()}", icon_url=interaction.user.display_avatar.url)
         
         await channel.send(embed=embed)
 
@@ -181,10 +181,6 @@ class SesameControlView(View):
         debug_mode = not debug_mode
         status = "ON" if debug_mode else "OFF"
         await interaction.response.send_message(f"Debug mode: {status}", ephemeral=True)
-        button_channel_id = int(os.getenv('DISCORD_BUTTON_CHANNEL'))
-        button_channel = client.get_channel(button_channel_id)
-        if button_channel:
-            await button_channel.send(f"Debug mode is now {status}.")
 
 @client.event
 async def on_ready():
