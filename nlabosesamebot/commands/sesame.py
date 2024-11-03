@@ -40,7 +40,7 @@ async def on_sesame_statechanged(device):
         client.loop.create_task(channel.send(embed=embed))
     client.loop.create_task(update_lock_status_message())
 
-async def send_embed_notification(interaction: Interaction, action: str, color: discord.Color):
+async def send_embed_notification(interaction: Interaction, action: str, action_label: str, color: discord.Color):
     notification_channel_id = int(os.getenv('DISCORD_CHANNEL'))
     channel = client.get_channel(notification_channel_id)
     
@@ -52,7 +52,7 @@ async def send_embed_notification(interaction: Interaction, action: str, color: 
             description=f"{emoji} **{interaction.user.display_name} has {action_text} the door**",
             color=color
         )
-        embed.set_author(name=f"{interaction.user.display_name} used {action_text.capitalize()}", icon_url=interaction.user.display_avatar.url)
+        embed.set_author(name=f"{interaction.user.display_name} used \"{action_label}\"", icon_url=interaction.user.display_avatar.url)
         
         await channel.send(embed=embed)
 
@@ -129,7 +129,7 @@ class SesameControlView(View):
         latest_interaction = interaction
         try:
             await handler.unlock()
-            await send_embed_notification(interaction, "🔓 Unlocked", discord.Color.green())
+            await send_embed_notification(interaction, button.label, discord.Color.green())
             await update_lock_status_message()
             await send_status_embed(interaction)
         except Exception as e:
@@ -147,7 +147,7 @@ class SesameControlView(View):
         latest_interaction = interaction
         try:
             await handler.lock()
-            await send_embed_notification(interaction, "🔒 Locked", discord.Color.red())
+            await send_embed_notification(interaction, button.label, discord.Color.red())
             await update_lock_status_message()
             await send_status_embed(interaction)
         except Exception as e:
